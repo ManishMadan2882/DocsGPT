@@ -208,7 +208,36 @@ export default function Upload({
     xhr.open('POST', `${apiHost + '/api/upload'}`);
     xhr.send(formData);
   };
+  const uploadRemote = () => {
+    console.log('ji');
 
+    const apiHost = import.meta.env.VITE_API_HOST;
+    fetch(`${apiHost}/api/remote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      },
+      body: new URLSearchParams({
+        user: 'local',
+        source: 'url',
+        name: urlName,
+        data: url
+      }).toString()
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const { task_id } = data;
+        setProgress({ type: 'TRAINIING', percentage: 0, taskId: task_id });
+      })
+      .catch(error => {
+        console.error('There was a problem with your fetch operation:', error);
+      });
+  }
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
@@ -277,6 +306,28 @@ export default function Upload({
                 ))}
                 {files.length === 0 && <p className="text-gray-6000 dark:text-light-gray">None</p>}
               </div>
+              <div className="flex flex-row-reverse">
+                <button
+                  onClick={uploadFile}
+                  className={`ml-6 rounded-3xl bg-purple-30 text-white cursor-pointer ${files.length > 0 && docName.trim().length > 0
+                    ? ''
+                    : 'bg-opacity-75 text-opacity-80'
+                    } py-2 px-6`}
+                  disabled={files.length === 0 || docName.trim().length === 0} // Disable the button if no file is selected or docName is empty
+                >
+                  Train
+                </button>
+                <button
+                  onClick={() => {
+                    setDocName('');
+                    setfiles([]);
+                    setModalState('INACTIVE');
+                  }}
+                  className="font-medium dark:text-light-gray cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
             </>
           )
         }
@@ -304,31 +355,31 @@ export default function Upload({
               <div className="relative bottom-12 left-2 mt-[-18.39px]">
                 <span className="bg-white px-2 text-xs text-silver dark:text-silver dark:bg-outer-space">Link</span>
               </div>
+              <div className="flex flex-row-reverse pt-0.5">
+                <button
+                  onClick={uploadRemote}
+                  className={`ml-6 rounded-3xl bg-purple-30 text-white cursor-pointer ${files.length > 0 && docName.trim().length > 0
+                    ? ''
+                    : 'bg-opacity-75 text-opacity-80'
+                    } py-2 px-6`}
+                  disabled={urlName.length === 0 || url.length === 0} // Disable the button if no URL is selected or URL name is empty
+                >
+                  Train
+                </button>
+                <button
+                  onClick={() => {
+                    setDocName('');
+                    setfiles([]);
+                    setModalState('INACTIVE');
+                  }}
+                  className="font-medium dark:text-light-gray cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
             </>
           )
         }
-        <div className="flex flex-row-reverse">
-          <button
-            onClick={uploadFile}
-            className={`ml-6 rounded-3xl bg-purple-30 text-white cursor-pointer ${files.length > 0 && docName.trim().length > 0
-              ? ''
-              : 'bg-opacity-75 text-opacity-80'
-              } py-2 px-6`}
-            disabled={files.length === 0 || docName.trim().length === 0} // Disable the button if no file is selected or docName is empty
-          >
-            Train
-          </button>
-          <button
-            onClick={() => {
-              setDocName('');
-              setfiles([]);
-              setModalState('INACTIVE');
-            }}
-            className="font-medium dark:text-light-gray cursor-pointer"
-          >
-            Cancel
-          </button>
-        </div>
       </>
     );
   }
