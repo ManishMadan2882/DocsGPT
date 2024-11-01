@@ -21,6 +21,7 @@ class ClassicRAG(BaseRetriever):
     ):
         self.question = question
         self.vectorstore = source['active_docs'] if 'active_docs' in source else None
+        print("self.vectorstore",self.vectorstore)
         self.chat_history = chat_history
         self.prompt = prompt
         self.chunks = chunks

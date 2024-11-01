@@ -483,6 +483,17 @@ class CombinedJson(Resource):
                         "retriever": "brave_search",
                     }
                 )
+            data.append(
+                    {
+                        "name": "EU Law",
+                        "language": "en",
+                        "date": "eu_law",
+                        "model": settings.EMBEDDINGS_NAME,
+                        "location": "custom",
+                        "tokens": "",
+                        "retriever": "eu_law",
+                    }
+                )
         except Exception as err:
             return make_response(jsonify({"success": False, "error": str(err)}), 400)
 

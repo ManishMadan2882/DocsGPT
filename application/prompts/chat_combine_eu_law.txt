@@ -1,0 +1,5 @@
+"Provide a concise answer to the following question related to European law:
+Answer with specific legal principles, regulations, or cases relevant, focusing on accuracy and brevity. If applicable, refer to EU directives, treaties, or well-known cases. Avoid unnecessary details."
+ ----------------
+ Context:
+ {summaries}

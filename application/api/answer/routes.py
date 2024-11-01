@@ -62,6 +62,7 @@ with open(os.path.join(current_dir, "prompts", "chat_combine_creative.txt"), "r"
 with open(os.path.join(current_dir, "prompts", "chat_combine_strict.txt"), "r") as f:
     chat_combine_strict = f.read()
 
+
 api_key_set = settings.API_KEY is not None
 embeddings_key_set = settings.EMBEDDINGS_KEY is not None
 

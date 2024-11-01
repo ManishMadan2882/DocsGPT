@@ -1,7 +1,7 @@
 from application.retriever.classic_rag import ClassicRAG
 from application.retriever.duckduck_search import DuckDuckSearch
 from application.retriever.brave_search import BraveRetSearch
-
+from application.retriever.eu_law import EuroLawRag
 
 
 class RetrieverCreator:
@@ -9,7 +9,8 @@ class RetrieverCreator:
         'classic': ClassicRAG,
         'duckduck_search': DuckDuckSearch,
         'brave_search': BraveRetSearch,
-        'default': ClassicRAG
+        'default': ClassicRAG,
+        'eu_law': EuroLawRag
     }
 
     @classmethod
