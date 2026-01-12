@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from flask import current_app, jsonify, make_response, request
 from flask_restx import fields, Namespace, Resource
 
+from application.agents.tools.artifact_storage import ArtifactStorage
 from application.agents.tools.spec_parser import parse_spec
 from application.agents.tools.tool_manager import ToolManager
 from application.api import api
@@ -467,3 +468,31 @@ class ParseSpec(Resource):
         except Exception as err:
             current_app.logger.error(f"Error parsing spec: {err}", exc_info=True)
             return make_response(jsonify({"success": False, "error": "Failed to parse specification"}), 500)
+
+
+@tools_ns.route("/tools/artifacts/<string:artifact_id>")
+class GetArtifact(Resource):
+    @api.doc(description="Retrieve a stored tool artifact by ID")
+    def get(self, artifact_id):
+        decoded_token = getattr(request, "decoded_token", None)
+        if not decoded_token:
+            return make_response(
+                jsonify({"success": False, "message": "Authentication required"}), 401
+            )
+
+        user_id = decoded_token.get("sub")
+        storage = ArtifactStorage(user_id=user_id)
+        artifact = storage.get_artifact(artifact_id)
+
+        if not artifact:
+            return make_response(
+                jsonify({"success": False, "message": "Artifact not found"}), 404
+            )
+
+        return make_response(
+            jsonify({
+                "success": True,
+                "artifact": artifact,
+            }),
+            200,
+        )

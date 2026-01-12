@@ -5,6 +5,7 @@ from typing import Dict, Generator, List, Optional
 
 from bson.objectid import ObjectId
 
+from application.agents.tools.artifact_storage import ArtifactStorage
 from application.agents.tools.tool_action_parser import ToolActionParser
 from application.agents.tools.tool_manager import ToolManager
 from application.core.mongo_db import MongoDB
@@ -269,9 +270,24 @@ class BaseAgent(ABC):
         else:
             logger.debug(f"Executing tool: {action_name} with args: {call_args}")
             result = tool.execute_action(action_name, **parameters)
-        tool_call_data["result"] = (
-            f"{str(result)[:50]}..." if len(str(result)) > 50 else result
-        )
+
+        tool_name = tool_data["name"]
+        artifact_storage = ArtifactStorage(user_id=self.user)
+
+        if artifact_storage.is_artifact_tool(tool_name):
+            processed = artifact_storage.process_tool_result(
+                result=result,
+                tool_name=tool_name,
+                action_name=action_name,
+                call_id=call_id,
+                tool_id=tool_id,
+            )
+            tool_call_data["artifact_id"] = processed["artifact_id"]
+            tool_call_data["result"] = f"[Artifact stored: {processed['artifact_id'][:8]}...]"
+        else:
+            tool_call_data["result"] = (
+                f"{str(result)[:50]}..." if len(str(result)) > 50 else result
+            )
 
         yield {"type": "tool_call", "data": {**tool_call_data, "status": "completed"}}
         self.tool_calls.append(tool_call_data)
