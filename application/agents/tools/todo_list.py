@@ -165,6 +165,9 @@ class TodoListTool(Tool):
         """Return configuration requirements."""
         return {}
 
+    def uses_artifact_storage(self) -> bool:
+        return True
+
     # -----------------------------
     # Internal helpers
     # -----------------------------

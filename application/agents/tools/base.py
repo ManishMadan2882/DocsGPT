@@ -19,3 +19,10 @@ class Tool(ABC):
         Returns a dictionary describing the configuration requirements for the tool.
         """
         pass
+
+    def uses_artifact_storage(self) -> bool:
+        """
+        Returns True if this tool's results should be stored as artifacts in DB.
+        Override in subclasses that need artifact storage.
+        """
+        return False

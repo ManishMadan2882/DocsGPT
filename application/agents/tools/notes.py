@@ -125,6 +125,9 @@ class NotesTool(Tool):
         """Return configuration requirements (none for now)."""
         return {}
 
+    def uses_artifact_storage(self) -> bool:
+        return True
+
     # -----------------------------
     # Internal helpers (single-note)
     # -----------------------------

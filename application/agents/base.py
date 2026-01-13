@@ -272,9 +272,9 @@ class BaseAgent(ABC):
             result = tool.execute_action(action_name, **parameters)
 
         tool_name = tool_data["name"]
-        artifact_storage = ArtifactStorage(user_id=self.user)
 
-        if artifact_storage.is_artifact_tool(tool_name):
+        if tool.uses_artifact_storage():
+            artifact_storage = ArtifactStorage(user_id=self.user)
             processed = artifact_storage.process_tool_result(
                 result=result,
                 tool_name=tool_name,
